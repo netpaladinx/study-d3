@@ -6,7 +6,7 @@ import { transition } from "d3-transition";
 import { easeElastic } from "d3-ease";
 import { axisLeft, axisBottom } from "d3-axis";
 
-import { useSVG } from "./svg-lib/svg-hooks";
+import { useSvg } from "./d3-lib/svg-hooks";
 
 const initDraw = (svg) => {
   const chardata = [
@@ -130,7 +130,7 @@ const initDraw = (svg) => {
 };
 
 const AnimatedColorfulBarChart = (props) => {
-  const [container] = useSVG({ initDraw });
+  const [container] = useSvg({ initDraw });
 
   return <div ref={container}></div>;
 };

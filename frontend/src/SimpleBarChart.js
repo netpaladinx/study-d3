@@ -2,7 +2,7 @@ import React from "react";
 import { scaleLinear } from "d3-scale";
 import { max } from "d3-array";
 
-import { useSVG } from "./svg-lib/svg-hooks";
+import { useSvg } from "./d3-lib/svg-hooks";
 
 const initDraw = (svg) => {
   const data = [
@@ -87,7 +87,7 @@ const initDraw = (svg) => {
 };
 
 const SimpleBarChart = (props) => {
-  const [container] = useSVG({ initDraw });
+  const [container] = useSvg({ initDraw });
   return <div ref={container}></div>;
 };
 

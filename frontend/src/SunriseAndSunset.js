@@ -3,7 +3,7 @@ import { scaleTime } from "d3-scale";
 import { range } from "d3-array";
 import { area, curveLinear } from "d3-shape";
 
-import { useSVG } from "./svg-lib/svg-hooks";
+import { useSvg } from "./d3-lib/svg-hooks";
 
 const initDraw = (svg) => {
   const width = 700;
@@ -205,7 +205,7 @@ const initDraw = (svg) => {
 };
 
 const SunriseAndSunset = (props) => {
-  const [container] = useSVG({ initDraw });
+  const [container] = useSvg({ initDraw });
   return <div ref={container}></div>;
 };
 

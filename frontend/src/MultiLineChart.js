@@ -10,7 +10,7 @@ import { axisBottom, axisLeft } from "d3-axis";
 import { line } from "d3-shape";
 import { event } from "d3-selection";
 
-import { useSVG } from "./svg-lib/svg-hooks";
+import { useSvg } from "./d3-lib/svg-hooks";
 
 const getData = async () => {
   const data = tsvParse(await text("/data/unemployment.tsv"));
@@ -124,7 +124,7 @@ const initDraw = async (svg) => {
 };
 
 const MultiLineChart = (props) => {
-  const [container] = useSVG({ initDraw });
+  const [container] = useSvg({ initDraw });
 
   return <div ref={container} style={{ marginLeft: 100 }}></div>;
 };

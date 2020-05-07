@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useSVG } from "./svg-lib/svg-hooks";
+import { useSvg } from "./d3-lib/svg-hooks";
 
 const initDraw = (svg) => {
   const width = 900;
@@ -57,7 +57,7 @@ const initDraw = (svg) => {
 };
 
 const ThreeNodes = (props) => {
-  const [container] = useSVG({ initDraw });
+  const [container] = useSvg({ initDraw });
 
   return <div ref={container}></div>;
 };
