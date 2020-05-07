@@ -2,9 +2,9 @@ import React from "react";
 import { scaleLinear } from "d3-scale";
 import { max } from "d3-array";
 
-import { useSVG_2 } from "./use-svg";
+import { useSVG } from "./svg-lib/svg-hooks";
 
-const draw = (svg) => {
+const initDraw = (svg) => {
   const data = [
     { year: 2006, books: 54 },
     { year: 2007, books: 43 },
@@ -86,9 +86,9 @@ const draw = (svg) => {
   return svg;
 };
 
-const Case3 = (props) => {
-  const container = useSVG_2(draw);
+const SimpleBarChart = (props) => {
+  const [container] = useSVG({ initDraw });
   return <div ref={container}></div>;
 };
 
-export default Case3;
+export default SimpleBarChart;

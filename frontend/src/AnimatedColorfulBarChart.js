@@ -1,14 +1,14 @@
 import React from "react";
-import { create, select } from "d3-selection";
+import { select } from "d3-selection";
 import { scaleLinear, scaleBand } from "d3-scale";
 import { max, range } from "d3-array";
 import { transition } from "d3-transition";
 import { easeElastic } from "d3-ease";
 import { axisLeft, axisBottom } from "d3-axis";
 
-import { useSVG_2 } from "./use-svg";
+import { useSVG } from "./svg-lib/svg-hooks";
 
-const drawSvg = (svg) => {
+const initDraw = (svg) => {
   const chardata = [
     410,
     370,
@@ -129,10 +129,10 @@ const drawSvg = (svg) => {
   return svg;
 };
 
-const Case1 = (props) => {
-  const container = useSVG_2(drawSvg);
+const AnimatedColorfulBarChart = (props) => {
+  const [container] = useSVG({ initDraw });
 
   return <div ref={container}></div>;
 };
 
-export default Case1;
+export default AnimatedColorfulBarChart;

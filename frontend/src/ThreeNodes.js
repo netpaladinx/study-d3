@@ -1,8 +1,8 @@
 import React from "react";
 
-import { useSVG_2 } from "./use-svg";
+import { useSVG } from "./svg-lib/svg-hooks";
 
-const draw = (svg) => {
+const initDraw = (svg) => {
   const width = 900;
   const height = 400;
 
@@ -56,10 +56,10 @@ const draw = (svg) => {
   return svg;
 };
 
-const Case2 = (props) => {
-  const container = useSVG_2(draw);
+const ThreeNodes = (props) => {
+  const [container] = useSVG({ initDraw });
 
   return <div ref={container}></div>;
 };
 
-export default Case2;
+export default ThreeNodes;
