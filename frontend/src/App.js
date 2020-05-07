@@ -21,6 +21,7 @@ import SimpleBarChart from "./SimpleBarChart";
 import SunriseAndSunset from "./SunriseAndSunset";
 import SimpleLineChart from "./SimpleLineChart";
 import MultiLineChart from "./MultiLineChart";
+import AnimatedTreemap from "./AnimatedTreemap";
 
 const drawerWidth = 240;
 
@@ -94,13 +95,17 @@ const d3Examples = [
     name: "Multi-Line Chart",
     comp: (props) => <MultiLineChart {...props} />,
   },
+  {
+    name: "Animated Treemap",
+    comp: (props) => <AnimatedTreemap {...props} />,
+  },
 ];
 
 const App = (props) => {
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(true);
-  const [compIndex, setCompIndex] = React.useState(0);
+  const [compIndex, setCompIndex] = React.useState(6);
 
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
