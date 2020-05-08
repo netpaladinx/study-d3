@@ -11,22 +11,32 @@ import {
   hierarchy as d3hierarchy,
 } from "d3-hierarchy";
 
-import { useSvg } from "./d3-lib/svg-hooks";
+import { useSvg, makeInitDraw } from "./d3-lib/svg-hooks";
 import { useDataApi } from "./d3-lib/fetch-hooks";
-
-const initDraw = (svg) => {
-  return svg;
-};
 
 const width = 600;
 const height = 600;
 
+const initDraw = makeInitDraw({
+  width,
+  height,
+  attrs: {
+    viewBox: `0 -20 ${width} ${height + 20}`,
+    "font-family": "sans-serif",
+    "font-size": 10,
+  },
+  styles: {
+    overflow: "visible",
+  },
+  draw: (svg) => {},
+});
+
 const AnimatedTreemap = (props) => {
-  const [container] = useSvg({ width, height, initDraw });
+  const [container] = useSvg({ initDraw });
 
-  /* loaded data */
+  /* Loaded Data */
 
-  const [regionsResult] = useDataApi({ url: "/data/census-regions.csv" });
+  const [regionsResult] = useDataApi({ url: "/data/census-regions.csv" }); // how to do asynchronous fetching
   const [statesResult] = useDataApi({ url: "/data/population.tsv" });
 
   const keys = React.useMemo(() => d3range(1790, 2000, 10), []);
@@ -60,7 +70,7 @@ const AnimatedTreemap = (props) => {
       return {
         name: key,
         children:
-          depth < 1 ? values.map((d) => hierarchy(d, depth + 1)) : values,
+          depth < 1 ? values.map((d) => hierarchy(d, depth + 1)) : values, // how to use a recursive function to access a tree
       };
     };
 
@@ -79,7 +89,7 @@ const AnimatedTreemap = (props) => {
 
   const data = { keys, children };
 
-  /* data for visualization */
+  /* Data for Layout */
 
   const treemap = d3treemap()
     .tile(d3treemapResquarify)
@@ -90,14 +100,12 @@ const AnimatedTreemap = (props) => {
   // 1. how to create a tree from `data`, with each node containing associated `data`, `height`, `depth`, `parent`, `children`
   // 2. how to evaluate value on each node by `sum`
   // 3. how to sort children under each parent
-  // 4. how to get a treemap layout by a nested data
+  // 4. how to get a treemap layout by a nested data ({name, children})
   const root = treemap(
     d3hierarchy(data)
       .sum((d) => (d.values ? d3sum(d.values) : 0))
       .sort((a, b) => b.value - a.value)
   );
-
-  console.log(root);
 
   return <div ref={container}></div>;
 };
