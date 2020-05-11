@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useSvg } from "./d3-lib/svg-hooks";
+import { useSvg } from "./lib/d3-lib/svg-hooks";
 
 const initDraw = (svg) => {
   const width = 900;

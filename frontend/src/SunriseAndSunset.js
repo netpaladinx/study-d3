@@ -3,7 +3,7 @@ import { scaleTime } from "d3-scale";
 import { range } from "d3-array";
 import { area, curveLinear } from "d3-shape";
 
-import { useSvg } from "./d3-lib/svg-hooks";
+import { useSvg } from "./lib/d3-lib/svg-hooks";
 
 const initDraw = (svg) => {
   const width = 700;
@@ -41,7 +41,7 @@ const initDraw = (svg) => {
   }
 
   function yAxisLabel(d) {
-    if (d == 12) {
+    if (d === 12) {
       return "noon";
     }
     if (d < 12) {

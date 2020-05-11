@@ -1,30 +1,40 @@
 import React from "react";
 import { select as d3select } from "d3-selection";
 
-export const makeInitDraw = ({ width, height, draw, attrs, styles }) => (
-  svg
-) => {
+const DEFAULT_WIDTH = 800;
+const DEFAULT_HEIGHT = 600;
+
+export const makeSvgInit = ({
+  width = DEFAULT_WIDTH,
+  height = DEFAULT_HEIGHT,
+  attrs = {},
+  styles = {},
+  draw,
+}) => (svg) => {
   svg = svg.attr("width", width).attr("height", height);
+
   for (const [key, value] of Object.entries(attrs)) {
     svg = svg.attr(key, value);
   }
+
   for (const [key, value] of Object.entries(styles)) {
     svg = svg.attr(key, value);
   }
+
   return draw ? draw(svg) : svg;
 };
 
-export const useSvg = ({ initDraw }) => {
-  const svgRef = React.useRef(null);
+export const useSvg = (init) => {
+  const [svg, setSvg] = React.useState(null);
 
   const container = React.useCallback(
     (node) => {
-      svgRef.current = initDraw
-        ? initDraw(d3select(node).append("svg"))
-        : d3select(node).append("svg");
+      setSvg(
+        init ? init(d3select(node).append("svg")) : d3select(node).append("svg")
+      );
     },
-    [initDraw]
+    [init]
   );
 
-  return [container, svgRef];
+  return [container, svg];
 };

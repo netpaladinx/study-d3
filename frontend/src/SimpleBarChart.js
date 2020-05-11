@@ -2,7 +2,7 @@ import React from "react";
 import { scaleLinear } from "d3-scale";
 import { max } from "d3-array";
 
-import { useSvg } from "./d3-lib/svg-hooks";
+import { useSvg } from "./lib/d3-lib/svg-hooks";
 
 const initDraw = (svg) => {
   const data = [

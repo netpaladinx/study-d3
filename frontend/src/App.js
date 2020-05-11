@@ -15,12 +15,12 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import { execute } from "./console";
 
-import AnimatedColorfulBarChart from "./AnimatedColorfulBarChart";
-import ThreeNodes from "./ThreeNodes";
-import SimpleBarChart from "./SimpleBarChart";
-import SunriseAndSunset from "./SunriseAndSunset";
-import SimpleLineChart from "./SimpleLineChart";
-import MultiLineChart from "./MultiLineChart";
+// import AnimatedColorfulBarChart from "./AnimatedColorfulBarChart";
+// import ThreeNodes from "./ThreeNodes";
+// import SimpleBarChart from "./SimpleBarChart";
+// import SunriseAndSunset from "./SunriseAndSunset";
+// import SimpleLineChart from "./SimpleLineChart";
+// import MultiLineChart from "./MultiLineChart";
 import AnimatedTreemap from "./AnimatedTreemap";
 
 const drawerWidth = 240;
@@ -71,30 +71,30 @@ const useStyles = makeStyles({
 });
 
 const d3Examples = [
-  {
-    name: "Animated Colorful Bar Chart",
-    comp: (props) => <AnimatedColorfulBarChart {...props} />,
-  },
-  {
-    name: "Three Nodes",
-    comp: (props) => <ThreeNodes {...props} />,
-  },
-  {
-    name: "Simple Bar Chart",
-    comp: (props) => <SimpleBarChart {...props} />,
-  },
-  {
-    name: "Sunrise And Sunset",
-    comp: (props) => <SunriseAndSunset {...props} />,
-  },
-  {
-    name: "Simple Line Chart",
-    comp: (props) => <SimpleLineChart {...props} />,
-  },
-  {
-    name: "Multi-Line Chart",
-    comp: (props) => <MultiLineChart {...props} />,
-  },
+  // {
+  //   name: "Animated Colorful Bar Chart",
+  //   comp: (props) => <AnimatedColorfulBarChart {...props} />,
+  // },
+  // {
+  //   name: "Three Nodes",
+  //   comp: (props) => <ThreeNodes {...props} />,
+  // },
+  // {
+  //   name: "Simple Bar Chart",
+  //   comp: (props) => <SimpleBarChart {...props} />,
+  // },
+  // {
+  //   name: "Sunrise And Sunset",
+  //   comp: (props) => <SunriseAndSunset {...props} />,
+  // },
+  // {
+  //   name: "Simple Line Chart",
+  //   comp: (props) => <SimpleLineChart {...props} />,
+  // },
+  // {
+  //   name: "Multi-Line Chart",
+  //   comp: (props) => <MultiLineChart {...props} />,
+  // },
   {
     name: "Animated Treemap",
     comp: (props) => <AnimatedTreemap {...props} />,
@@ -105,7 +105,7 @@ const App = (props) => {
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(true);
-  const [compIndex, setCompIndex] = React.useState(6);
+  const [compIndex, setCompIndex] = React.useState(0);
 
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);

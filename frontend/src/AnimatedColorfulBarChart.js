@@ -6,7 +6,7 @@ import { transition } from "d3-transition";
 import { easeElastic } from "d3-ease";
 import { axisLeft, axisBottom } from "d3-axis";
 
-import { useSvg } from "./d3-lib/svg-hooks";
+import { useSvg } from "./lib/d3-lib/svg-hooks";
 
 const initDraw = (svg) => {
   const chardata = [

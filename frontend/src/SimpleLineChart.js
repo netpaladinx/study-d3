@@ -7,7 +7,7 @@ import { scaleLinear, scaleUtc } from "d3-scale";
 import { axisLeft, axisBottom } from "d3-axis";
 import { line } from "d3-shape";
 
-import { useSvg } from "./d3-lib/svg-hooks";
+import { useSvg } from "./lib/d3-lib/svg-hooks";
 
 const initDraw = async (svg) => {
   const width = 800;
