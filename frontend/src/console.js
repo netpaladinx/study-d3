@@ -1,6 +1,8 @@
 import { format } from "d3-format";
 import { scaleTime } from "d3-scale";
 import { bisectLeft } from "d3-array";
+import { transition } from "d3-transition";
+
 const f1 = () => {
   console.log("1.4 " + format("d")(1.4));
   console.log("1.5 " + format("d")(1.5));
@@ -21,6 +23,12 @@ const f3 = () => {
   console.log("bisectLeft(arr, 3.5): " + bisectLeft(arr, 3.5));
   console.log("bisectLeft(arr, 3.5, 1): " + bisectLeft(arr, 3.5, 1));
   console.log("bisectLeft(arr, 3.5, 5): " + bisectLeft(arr, 3.5, 5));
+};
+
+const f4 = () => {
+  transition.delay(function (d, i) {
+    return i * 10;
+  });
 };
 
 export const execute = () => {};

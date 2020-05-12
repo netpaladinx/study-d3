@@ -22,6 +22,8 @@ import { execute } from "./console";
 // import SimpleLineChart from "./SimpleLineChart";
 // import MultiLineChart from "./MultiLineChart";
 import AnimatedTreemap from "./AnimatedTreemap";
+import ConnectedScatterplot from "./ConnectedScatterplot";
+import Gapminder from "./Gapminder";
 
 const drawerWidth = 240;
 
@@ -99,13 +101,21 @@ const d3Examples = [
     name: "Animated Treemap",
     comp: (props) => <AnimatedTreemap {...props} />,
   },
+  {
+    name: "Connected Scatterplot",
+    comp: (props) => <ConnectedScatterplot {...props} />,
+  },
+  {
+    name: "Gapminder",
+    comp: (props) => <Gapminder {...props} />,
+  },
 ];
 
 const App = (props) => {
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(true);
-  const [compIndex, setCompIndex] = React.useState(0);
+  const [compIndex, setCompIndex] = React.useState(2);
 
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);

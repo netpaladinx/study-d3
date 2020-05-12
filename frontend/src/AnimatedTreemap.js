@@ -14,11 +14,24 @@ import {
   treemapResquarify as d3treemapResquarify,
   hierarchy as d3hierarchy,
 } from "d3-hierarchy";
+import { format as d3format } from "d3-format";
+import { scaleOrdinal as d3scaleOrdinal } from "d3-scale";
+import { schemeCategory10 as d3schemeCategory10 } from "d3-scale-chromatic";
+import {
+  interpolate as d3interpolate,
+  interpolateRgb as d3interpolateRgb,
+} from "d3-interpolate";
+import { transition as d3transition } from "d3-transition";
+import { easeLinear as d3easeLinear } from "d3-ease";
 
 import { useSvg, makeSvgInit, useDataFetch } from "./lib/d3-lib";
 
 const width = 600;
 const height = 600;
+const duration = 2500;
+
+const formatNumber = d3format(",d");
+const parseNumber = (s) => +s.replace(/,/g, ""); // "+": convert a string to a number
 
 const init = makeSvgInit({
   width,
@@ -98,30 +111,157 @@ const computeLayout = (data) => {
   );
   const max = d3max(sums);
 
-  const layout = { root, sums, max };
+  const layout = { treemap, root, sums, max };
   return layout;
 };
 
-const drawBox = (svg, data, layout) => {
-  console.log(layout);
+const computeStyle = (data) => {
+  const color = d3scaleOrdinal(
+    data.children.map((d) => d.name),
+    d3schemeCategory10.map((d) => d3interpolateRgb(d, "white")(0.5))
+  );
 
+  const style = { color };
+  return style;
+};
+
+const drawBoxes = (svg, data, layout, style) => {
   const { root, max } = layout;
+  const startIndex = 0;
 
-  svg
+  const box = svg
     .append("g")
     .selectAll("g")
     .data(
+      // set data used by boxes
       data.keys
         .map((key, i) => {
           const value = root.sum((d) => (d.values ? d.values[i] : 0)).value; // sum over one key
-          return { key, value, i, k: Math.sqrt(value / max) };
+          return { key, value, i, k: Math.sqrt(value / max) }; // area ratio => size ratio
         })
         .reverse()
     )
     .join("g")
     .attr(
+      // set positions of boxes
       "transform",
       ({ k }) => `translate(${((1 - k) / 2) * width},${((1 - k) / 2) * height})`
+    )
+    .attr("opacity", ({ i }) => (i >= startIndex ? 1 : 0)) // determine display or hide for boxes
+    .call((
+      g // draw text for boxes
+    ) =>
+      g
+        .append("text")
+        .attr("y", -6)
+        .attr("fill", "#777")
+        .selectAll("tspan")
+        .data(({ key, value }) => [key, `${formatNumber(value)}`])
+        .join("tspan")
+        .attr("font-weight", (d, i) => (i === 0 ? "bold" : null))
+        .text((d) => d)
+    )
+    .call((
+      g // draw rect for boxes
+    ) =>
+      g
+        .append("rect")
+        .attr("fill", "none")
+        .attr("stroke", "#ccc")
+        .attr("width", ({ k }) => k * width)
+        .attr("height", ({ k }) => k * height)
+    );
+
+  return box;
+};
+
+const getLeaves = (index, layout) => {
+  const { treemap, root, max } = layout;
+  const k = Math.sqrt(
+    root.sum((d) => (d.values ? d.values[index] : 0)).value / max
+  );
+  const x = ((1 - k) / 2) * width;
+  const y = ((1 - k) / 2) * height;
+  const leaves = treemap
+    .size([width * k, height * k])(root)
+    .each((d) => ((d.x0 += x), (d.x1 += x), (d.y0 += y), (d.y1 += y)))
+    .leaves();
+  return leaves;
+};
+
+const drawLeaves = (svg, data, layout, style) => {
+  const { color } = style;
+  const startIndex = 0;
+
+  const leaf = svg
+    .append("g")
+    .selectAll("g")
+    .data(getLeaves(startIndex, layout))
+    .join("g")
+    .attr("transform", (d) => `translate(${d.x0},${d.y0})`);
+
+  leaf
+    .append("rect")
+    .attr("id", (d, i) => (d.leafId = `leaf-${i}`))
+    .attr("fill", (d) => {
+      while (d.depth > 1) d = d.parent;
+      return color(d.data.name);
+    })
+    .attr("width", (d) => d.x1 - d.x0)
+    .attr("height", (d) => d.y1 - d.y0);
+
+  leaf
+    .append("clipPath")
+    .attr("id", (d, i) => (d.clipId = `clip-${i}`))
+    .append("use")
+    .attr("xlink:href", (d) => `#${d.leafId}`);
+
+  leaf
+    .append("text")
+    .attr("clip-path", (d) => `url(#${d.clipId})`)
+    .selectAll("span")
+    .data((d) => [d.data.name, formatNumber(d.value)])
+    .join("tspan")
+    .attr("x", 3)
+    .attr(
+      "y",
+      (d, i, nodes) => `${(i === nodes.length - 1) * 0.3 + 1.1 + i * 0.9}em`
+    )
+    .attr("fill-opacity", (d, i, nodes) =>
+      i === nodes.length - 1 ? 0.7 : null
+    )
+    .text((d) => d);
+
+  leaf.append("title").text((d) => d.data.name);
+
+  return leaf;
+};
+
+const animate = (box, leaf, layout, style, movingIndex) => {
+  box
+    .transition()
+    .duration(duration)
+    .attr("opacity", ({ i }) => (i >= movingIndex ? 1 : 0));
+
+  leaf
+    .data(getLeaves(movingIndex, layout))
+    .transition()
+    .duration(duration)
+    .ease(d3easeLinear)
+    .attr("transform", (d) => `translate(${d.x0},${d.y0})`)
+    .call((leaf) =>
+      leaf
+        .select("rect")
+        .attr("width", (d) => d.x1 - d.x0)
+        .attr("height", (d) => d.y1 - d.y0)
+    )
+    .call((leaf) =>
+      leaf.select("text tspan:last-child").tween("text", function (d) {
+        const i = d3interpolate(parseNumber(this.textContent), d.value);
+        return function (t) {
+          this.textContent = formatNumber(i(t));
+        };
+      })
     );
 };
 
@@ -150,24 +290,50 @@ const AnimatedTreemap = (props) => {
     }
   }, [regionsResult, statesResult]);
 
-  /* Layout data */
+  /* Layout and style data */
 
-  const layout = React.useMemo(() => {
+  const [layout, style] = React.useMemo(() => {
     if (data) {
-      return computeLayout(data);
+      return [computeLayout(data), computeStyle(data)];
     } else {
-      return null;
+      return [];
     }
   }, [data]);
 
-  /* Draw based on data */
+  /* Interaction or animation data */
+
+  const [movingIndex, setMovingIdex] = React.useState(0);
 
   React.useEffect(() => {
-    if (svg && data && layout) {
-      drawBox(svg, data, layout);
+    if (data && movingIndex < data.keys.length - 1) {
+      const id = setInterval(
+        () => setMovingIdex((movingIndex) => movingIndex + 1),
+        duration
+      );
+      return () => clearInterval(id);
     }
-    console.log("useEffect");
-  }, [svg, data, layout]);
+  }, [data, movingIndex]);
+
+  /* Draw based on data */
+
+  const [box, setBox] = React.useState(null);
+  const [leaf, setLeaf] = React.useState(null);
+
+  React.useEffect(() => {
+    if (svg && data && layout && style) {
+      const box = drawBoxes(svg, data, layout, style);
+      const leaf = drawLeaves(svg, data, layout, style);
+
+      setBox(box);
+      setLeaf(leaf);
+    }
+  }, [svg, data, layout, style]);
+
+  React.useEffect(() => {
+    if (box && leaf) {
+      animate(box, leaf, layout, style, movingIndex);
+    }
+  }, [box, leaf, layout, style, movingIndex]);
 
   return <div ref={container}></div>;
 };

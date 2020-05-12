@@ -1,7 +1,7 @@
 import React from "react";
 import { select as d3select } from "d3-selection";
 
-const DEFAULT_WIDTH = 800;
+const DEFAULT_WIDTH = 600;
 const DEFAULT_HEIGHT = 600;
 
 export const makeSvgInit = ({
@@ -13,12 +13,16 @@ export const makeSvgInit = ({
 }) => (svg) => {
   svg = svg.attr("width", width).attr("height", height);
 
+  if (!attrs.viewBox) {
+    svg = svg.attr("viewBox", [0, 0, width, height]);
+  }
+
   for (const [key, value] of Object.entries(attrs)) {
     svg = svg.attr(key, value);
   }
 
   for (const [key, value] of Object.entries(styles)) {
-    svg = svg.attr(key, value);
+    svg = svg.style(key, value);
   }
 
   return draw ? draw(svg) : svg;

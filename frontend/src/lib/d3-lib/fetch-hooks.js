@@ -1,5 +1,10 @@
 import React from "react";
-import { text as d3text, csv as d3csv, tsv as d3tsv } from "d3-fetch";
+import {
+  text as d3text,
+  csv as d3csv,
+  tsv as d3tsv,
+  json as d3json,
+} from "d3-fetch";
 
 import { useDataFetch } from "../hooks";
 
@@ -12,6 +17,8 @@ const fetchAndParse = async ({ url, parse }) => {
       result = await d3csv(url);
     } else if (url.endsWith(".tsv")) {
       result = await d3tsv(url);
+    } else if (url.endsWith(".json")) {
+      result = await d3json(url);
     }
   }
   return result;

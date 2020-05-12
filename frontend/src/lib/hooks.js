@@ -110,6 +110,7 @@ export const useDataFetch = (fetch, arg, initialData = null) => {
           dispatch({ type: "FETCH_SUCCESS", payload: result });
         }
       } catch (error) {
+        console.log(error);
         if (!didCancel) {
           dispatch({ type: "FETCH_FAILURE" });
         }
