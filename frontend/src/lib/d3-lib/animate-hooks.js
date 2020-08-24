@@ -1,41 +1,60 @@
 import React from "react";
 
-export const useMovingState = (open, ...args) => {
-  let start, end, interval, arr, inc;
-  if (Array.isArray(args[0])) {
-    arr = args[0];
-    start = 0;
-    end = arr.length - 1;
-    interval = args[1];
-  } else {
-    start = args[0];
-    end = args[1];
-    inc = args.length === 4 ? args[2] : 1;
-    interval = args.length === 4 ? args[3] : args[2];
+/*
+  useMovingState(open, arr, interval)
+  useMovingState(open, start, end, inc, interval) (end included)
+  useMovingState(open, start, end, interval)
+*/
+export const useMovingState = (open, params) => {
+  let { arr, start, end, interval = 1000, inc = 1, loop = false } = params;
+
+  if (Array.isArray(arr)) {
+    start = start ? start : 0;
+    end = end ? end : arr.length - 1;
   }
 
   const [movingState, setMovingState] = React.useState(start);
-  const paramsRef = React.useRef({ start, end, interval, arr, inc });
+  const paramsRef = React.useRef({ start, end, interval, arr, inc, loop });
 
   React.useEffect(() => {
-    const { end, interval, arr, inc } = paramsRef.current;
+    const { start, end, interval, arr, inc, loop } = paramsRef.current;
 
-    if (
-      open &&
-      ((arr && movingState + 1 <= end) ||
-        (inc &&
-          ((inc > 0 && movingState + inc <= end) ||
-            (inc < 0 && movingState + inc >= end))))
-    ) {
-      const id = setInterval(
-        () =>
-          setMovingState((movingState) =>
-            arr ? movingState + 1 : inc ? movingState + inc : movingState
-          ),
-        interval
-      );
+    if (open) {
+      if (arr) {
+        if (movingState + 1 <= end) {
+          const id = setInterval(
+            () => setMovingState((movingState) => movingState + 1),
+            interval
+          );
 
-      return () => clearInterval(id);
+          return () => clearInterval(id);
+        } else if (loop) {
+          const id = setInterval(() => setMovingState(start), interval);
+
+          return () => clearInterval(id);
+        }
+      }
+
+      if (inc) {
+        if (
+          (inc > 0 && movingState + inc <= end) ||
+          (inc < 0 && movingState + inc >= end)
+        ) {
+          const id = setInterval(
+            () =>
+              setMovingState((movingState) =>
+                arr ? movingState + 1 : inc ? movingState + inc : movingState
+              ),
+            interval
+          );
+
+          return () => clearInterval(id);
+        } else if (loop) {
+          const id = setInterval(() => setMovingState(start), interval);
+
+          return () => clearInterval(id);
+        }
+      }
     }
   }, [open, movingState, paramsRef]);
 

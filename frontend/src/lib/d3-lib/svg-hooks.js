@@ -11,9 +11,10 @@ export const makeSvgInit = ({
   styles = {},
   draw,
 }) => (svg) => {
-  svg = svg.attr("width", width).attr("height", height);
+  if (width) svg = svg.attr("width", width);
+  if (height) svg = svg.attr("height", height);
 
-  if (!attrs.viewBox) {
+  if (!attrs.viewBox && width && height) {
     svg = svg.attr("viewBox", [0, 0, width, height]);
   }
 
@@ -31,14 +32,37 @@ export const makeSvgInit = ({
 export const useSvg = (init) => {
   const [svg, setSvg] = React.useState(null);
 
+  const containerParams = React.useRef(null);
   const container = React.useCallback(
     (node) => {
-      setSvg(
-        init ? init(d3select(node).append("svg")) : d3select(node).append("svg")
-      );
+      let newSvg = init && node ? init(d3select(node).append("svg")) : null;
+
+      containerParams.current = {
+        node,
+        svg: newSvg,
+      };
+
+      if (newSvg) {
+        newSvg = Object.assign(newSvg, {
+          clear: function () {
+            const svgNode = this.node();
+            while (svgNode.hasChildNodes()) {
+              svgNode.removeChild(svgNode.firstChild);
+            }
+          },
+        });
+      }
+      setSvg(newSvg);
     },
     [init]
   );
+
+  React.useEffect(() => {
+    const { node: cnode, svg: csvg } = containerParams.current || {};
+    if (cnode && !csvg) {
+      container(cnode);
+    }
+  }, [container, containerParams]);
 
   return [container, svg];
 };
